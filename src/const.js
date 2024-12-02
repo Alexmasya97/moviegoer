@@ -1,3 +1,4 @@
 const FILM_COUNT = 5;
+const MAX_COMMENTS_ON_FILM = 5;
 
-export {FILM_COUNT};
+export {FILM_COUNT, MAX_COMMENTS_ON_FILM};

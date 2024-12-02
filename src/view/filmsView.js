@@ -6,8 +6,12 @@ const createFilmsViewTemplate = () => '<section class="films"></section>';
 
 // Клас - он же сам компонент
 export default class FilmsView {
+  constructor(film){
+    this.film = film;
+  }
+
   getTemplate() {
-    return createFilmsViewTemplate();
+    return createFilmsViewTemplate(this.film);
   }
 
   getElement() {
