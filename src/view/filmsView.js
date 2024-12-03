@@ -1,28 +1,29 @@
 // Вспомогательная функция для превращения строки с HTML в DOM-элементы
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
 
 // Функция, которая будет возвращать строку с HTML-разметкой компонента
 const createFilmsViewTemplate = () => '<section class="films"></section>';
 
 // Клас - он же сам компонент
 export default class FilmsView {
-  constructor(film){
-    this.film = film;
+  #film;
+  #element = null;
+  constructor(film) {
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmsViewTemplate(this.film);
+  get template() {
+    return createFilmsViewTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
