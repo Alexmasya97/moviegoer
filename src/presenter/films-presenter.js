@@ -46,7 +46,7 @@ export default class FilmsPresenter {
     this.#views.filmDetailsForm = new FilmDetailsFormView();
     this.#views.filmDetailsTopContainer = new FilmDetailsTopContainerView();
     this.#views.filmDetailsBottomContainer = new FilmDetailsBottomContainerView();
-    this.#views.listEmpty = new ListEmptyView()
+    this.#views.listEmpty = new ListEmptyView();
   }
 
   init(container, filmsModel, commentsModel) {
@@ -64,7 +64,7 @@ export default class FilmsPresenter {
     render(this.#views.filmDetailsForm, this.#views.filmDetails.element);
   }
 
-  #renderFilms(film, container) {
+  #renderFilms() {
     const films = this.#filmsModel.films; // Получаем все фильмы из модели
     if (films.length === 0) {
       render(this.#views.listEmpty, this.#container);
@@ -82,11 +82,11 @@ export default class FilmsPresenter {
 
     if (films.length > FILM_COUNT_PER_STEP) {
       render(this.#views.filmButtonMore, this.#views.filmList.element);
-      this.#views.filmButtonMore.element.addEventListener('click', (evt) => this.#filmButtonMoreClickHandler(evt))
+      this.#views.filmButtonMore.element.addEventListener('click', (evt) => this.#filmButtonMoreClickHandler(evt));
     }
   }
 
-  #filmButtonMoreClickHandler(evt) {
+  #filmButtonMoreClickHandler() {
     const films = this.#filmsModel.films;
     films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
@@ -120,10 +120,10 @@ export default class FilmsPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#removeFilmDetailsComponent()
-      document.removeEventListener('keydown', onEscKeyDown);
+      this.#removeFilmDetailsComponent();
+      document.removeEventListener('keydown', this.#onEscKeyDown);
     }
-  }
+  };
 
   #renderFilmDetails(film) {
     const comments = this.#commentsModel.getCommentsForFilm(film.id);
@@ -135,11 +135,11 @@ export default class FilmsPresenter {
     const closeButtonFilmDetailsElement = this.#views.filmDetailsForm.element.querySelector('.film-details__close-btn');
 
     closeButtonFilmDetailsElement.addEventListener('click', () => {
-      this.#removeFilmDetailsComponent()
+      this.#removeFilmDetailsComponent();
       this.#onEscKeyDown();
     });
 
-    document.addEventListener('keydown', this.#onEscKeyDown)
+    document.addEventListener('keydown', this.#onEscKeyDown);
   }
 }
 
