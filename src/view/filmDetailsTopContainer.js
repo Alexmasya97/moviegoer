@@ -76,23 +76,25 @@ const createFilmDetailsTopContainerTemplate = (film) => {
 
 
 export default class FilmDetailsTopContainerView {
+  #element = null;
+  #film;
   constructor(film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmDetailsTopContainerTemplate(this.film);
+  get template() {
+    return createFilmDetailsTopContainerTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

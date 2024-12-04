@@ -13,7 +13,11 @@ const createElement = (template) => {
 };
 
 const render = (component, container, place = RenderPosition.BEFOREEND) => {
-  container.insertAdjacentElement(place, component.getElement());
+  if (component && component.element) {
+    container.insertAdjacentElement(place, component.element);
+  } else {
+    throw('Component or component.element is null or undefined:', component);
+  }
 };
 
 export {RenderPosition, createElement, render};
