@@ -1,14 +1,13 @@
-// Вспомогательная функция для превращения строки с HTML в DOM-элементы
-import { createElement } from '../render.js';
-
+import AbstractView from '../framework/view/abstract-view.js';
 // Функция, которая будет возвращать строку с HTML-разметкой компонента
 const createFilmsViewTemplate = () => '<section class="films"></section>';
 
 // Клас - он же сам компонент
-export default class FilmsView {
+export default class FilmsView extends AbstractView {
   #film;
-  #element = null;
+
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -16,14 +15,4 @@ export default class FilmsView {
     return createFilmsViewTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }
