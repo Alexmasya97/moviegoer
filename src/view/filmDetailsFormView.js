@@ -1,22 +1,11 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmDetailsFormTemplate = () => '<form class="film-details__inner" action="" method="get"></form>';
 
-export default class FilmDetailsFormView {
-  #element = null;
+export default class FilmDetailsFormView extends AbstractView {
+
   get template() {
     return createFilmDetailsFormTemplate();
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }
