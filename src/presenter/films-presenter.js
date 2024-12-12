@@ -10,7 +10,7 @@ import FilmDetailsTopContainerView from '../view/filmDetailsTopContainer.js';
 import FilmDetailsBottomContainerView from '../view/filmDetailsBottomContainer.js';
 import ListEmptyView from '../view/listEmptyView.js';
 import { FILM_COUNT_PER_STEP } from '../const.js';
-import { render } from '../render.js';
+import { render, remove } from '../framework/render.js';
 
 export default class FilmsPresenter {
   #container;
@@ -68,7 +68,7 @@ export default class FilmsPresenter {
     const films = this.#filmsModel.films; // Получаем все фильмы из модели
     if (films.length === 0) {
       render(this.#views.listEmpty, this.#container);
-      this.#views.sort.element.remove();
+      remove(this.#views.sort);
       return;
     }
 
@@ -82,11 +82,11 @@ export default class FilmsPresenter {
 
     if (films.length > FILM_COUNT_PER_STEP) {
       render(this.#views.filmButtonMore, this.#views.filmList.element);
-      this.#views.filmButtonMore.element.addEventListener('click', (evt) => this.#filmButtonMoreClickHandler(evt));
+      this.#views.filmButtonMore.setClickHandler(this.#filmButtonMoreClickHandler);
     }
   }
 
-  #filmButtonMoreClickHandler() {
+  #filmButtonMoreClickHandler = () => {
     const films = this.#filmsModel.films;
     films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
@@ -96,9 +96,10 @@ export default class FilmsPresenter {
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= films.length) {
-      this.#views.filmButtonMore.element.remove();
+      remove(this.#views.filmButtonMore);
+
     }
-  }
+  };
 
   #renderFilm(film, container) {
     const filmCardComponent = new FilmCardView(film);
@@ -112,7 +113,7 @@ export default class FilmsPresenter {
   }
 
   #removeFilmDetailsComponent = () => {
-    this.#views.filmDetailsForm.element.remove();
+    remove(this.#views.filmDetailsForm);
     this.filmDetailsForm = null;
     document.body.classList.remove('hide-overflow');
   };
@@ -127,20 +128,18 @@ export default class FilmsPresenter {
 
   #renderFilmDetails(film) {
     const comments = this.#commentsModel.getCommentsForFilm(film.id);
-
     if (this.#views.filmDetailsForm.element) {
-      render(new FilmDetailsTopContainerView(film), this.#views.filmDetailsForm.element);
+      const topContainerView = new FilmDetailsTopContainerView(film); // Create instance
+      render(topContainerView, this.#views.filmDetailsForm.element);
       render(new FilmDetailsBottomContainerView(film, comments), this.#views.filmDetailsForm.element);
+      topContainerView.setClickHandler(this.#cardClose);
     }
-    const closeButtonFilmDetailsElement = this.#views.filmDetailsForm.element.querySelector('.film-details__close-btn');
-
-    closeButtonFilmDetailsElement.addEventListener('click', () => {
-      this.#removeFilmDetailsComponent();
-      this.#onEscKeyDown();
-    });
-
-    document.addEventListener('keydown', this.#onEscKeyDown);
   }
+
+  #cardClose = () => {
+    this.#removeFilmDetailsComponent();
+    this.#onEscKeyDown();
+  };
 }
 
 
