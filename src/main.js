@@ -4,6 +4,7 @@ import FooterStatisticView from './view/footerStatisticView.js';
 import NavigationView from './view/NavigationView.js';
 import FilmsModel from './model/films-model.js';
 import CommentsModel from './model/comment-model.js';
+import { generateFilms } from './mock/films.js';
 
 import FilmsPresenter from './presenter/films-presenter.js';
 
@@ -15,8 +16,13 @@ const filmsPresenter = new FilmsPresenter();
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel(filmsModel);
 
-render(new HeaderProfileView(), siteHeaderElement);
-render(new FooterStatisticView(), siteFooterElement);
+const films = generateFilms();
+
+const footerStatisticView = new FooterStatisticView(films);
+const headerProfileView = new HeaderProfileView(films);
+
+render(headerProfileView, siteHeaderElement);
+render(footerStatisticView, siteFooterElement);
 render(new NavigationView(), siteMainElement);
 
 

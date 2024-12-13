@@ -52,6 +52,7 @@ export default class FilmsPresenter {
 
   #renderFilms() {
     const films = this.#filmsModel.films; // Получаем все фильмы из модели
+
     if (films.length === 0) {
       render(this.listEmpty, this.#container);
       remove(this.sort);
@@ -74,17 +75,19 @@ export default class FilmsPresenter {
 
   #filmButtonMoreClickHandler = () => {
     const films = this.#filmsModel.films;
+
     films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => {
         this.#renderFilm(film, this.filmListContainer);
       });
+
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= films.length) {
       remove(this.filmButtonMore);
-
     }
+
   };
 
   #renderFilm(film, container) {

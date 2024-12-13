@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomArrayElement } from '../utils';
+import { getRandomInteger, getRandomArrayElement } from '../utils/utils';
 import { MAX_COMMENTS_ON_FILM } from '../const.js';
 
 // Генерация одного комментария
