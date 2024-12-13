@@ -34,7 +34,6 @@ const render = (component, container, place = RenderPosition.BEFOREEND) => {
   if (container === null) {
     throw new Error('Container element doesn\'t exist');
   }
-
   container.insertAdjacentElement(place, component.element);
 };
 
