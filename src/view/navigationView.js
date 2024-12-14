@@ -12,4 +12,15 @@ export default class NavigationView extends AbstractView  {
   get template() {
     return createNavigationTemplate();
   }
+
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.addEventListener('click', this.#clickHandler);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    // 3. А внутри абстрактного обработчика вызовем колбэк
+    this._callback.click();
+  };
 }
