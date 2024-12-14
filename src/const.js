@@ -1,4 +1,4 @@
-const FILM_COUNT = 12;
+const FILM_COUNT = 2;
 const FILM_COUNT_PER_STEP = 5;
 const MAX_COMMENTS_ON_FILM = 5;
 const NOVICE_STATUS = 10;

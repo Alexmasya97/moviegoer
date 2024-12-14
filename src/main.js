@@ -1,7 +1,6 @@
 import {render} from './framework/render.js';
 import HeaderProfileView from './view/headerProfileView.js';
 import FooterStatisticView from './view/footerStatisticView.js';
-import NavigationView from './view/NavigationView.js';
 import FilmsModel from './model/films-model.js';
 import CommentsModel from './model/comment-model.js';
 import { generateFilms } from './mock/films.js';
@@ -23,7 +22,5 @@ const headerProfileView = new HeaderProfileView(films);
 
 render(headerProfileView, siteHeaderElement);
 render(footerStatisticView, siteFooterElement);
-render(new NavigationView(), siteMainElement);
-
 
 filmsPresenter.init(siteMainElement, filmsModel, commentsModel);
