@@ -1,4 +1,4 @@
-import {render} from './framework/render.js';
+import { render } from './framework/render.js';
 import HeaderProfileView from './view/headerProfileView.js';
 import FooterStatisticView from './view/footerStatisticView.js';
 import FilmsModel from './model/films-model.js';
@@ -13,8 +13,7 @@ const siteFooterElement = document.querySelector('.footer');
 
 const filmsPresenter = new FilmsPresenter();
 const filmsModel = new FilmsModel();
-const commentsModel = new CommentsModel(filmsModel);
-
+const commentsModel = new CommentsModel(filmsModel.films);
 const films = generateFilms();
 
 const footerStatisticView = new FooterStatisticView(films);

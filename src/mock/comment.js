@@ -47,6 +47,4 @@ const generateComments = (films) => {
   }, []);
 };
 
-
-// console.log(generateComment())
 export { generateComments};

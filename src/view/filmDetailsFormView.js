@@ -8,4 +8,13 @@ export default class FilmDetailsFormView extends AbstractView {
     return createFilmDetailsFormTemplate();
   }
 
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector.addEventListener('click', this.#clickHandler);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
