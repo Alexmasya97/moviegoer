@@ -7,11 +7,12 @@ import FilmButtonMoreView from '../view/filmButtonMoreView.js';
 import FilmListView from '../view/filmListView.js';
 import FilmListContainerView from '../view/filmListContainerView.js';
 import FilmDetailsView from '../view/filmDetailsView.js';
-// import FilmDetailsFormView from '../view/filmDetailsFormView.js';
 import ListEmptyView from '../view/listEmptyView.js';
-import { FILM_COUNT_PER_STEP } from '../const.js';
-import { render, remove } from '../framework/render.js';
+import { FILM_COUNT_PER_STEP, SortType } from '../const.js';
+import { render, remove, replace } from '../framework/render.js';
 import { updateItem } from '../utils/utils.js';
+import { sortFilmsByDate, sortFilmsByRating } from '../utils/film.js';
+
 
 export default class FilmsPresenter {
   #container;
@@ -20,14 +21,16 @@ export default class FilmsPresenter {
   #films;
   #filmPresenter = new Map();
   #selectedFilm;
-  #watchlistBtnClickHandler;
-  #watchedBtnClickHandler;
-  #favouriteBtnClickHandler;
-  #allmoviesBtnClickHandler;
   #filmDetailsPresenter;
   #removeFilmDetailsComponent;
   #onEscKeyDown;
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #sourcedFilms = []
+
+  #renderFilmList
+  #sortComponent
+  #currentSortType = SortType.DEFAULT;
+
 
   constructor(views, filmsModel, commentsModel) {
     this.#filmsModel = filmsModel;
@@ -37,24 +40,24 @@ export default class FilmsPresenter {
 
   #initViews() {
     this.films = new FilmsView();
-    this.sort = new SortView();
     this.filmList = new FilmListView();
     this.filmListContainer = new FilmListContainerView();
     this.filmButtonMore = new FilmButtonMoreView();
     this.filmDetails = new FilmDetailsView();
-    // this.filmDetailsForm = new FilmDetailsFormView();
     this.listEmpty = new ListEmptyView();
-    this.navigation = new NavigationView();
+    this.navigation = new NavigationView(this.#sourcedFilms);
   }
 
   init(container, filmsModel, commentsModel) {
     this.#container = container;
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
+    this.#sourcedFilms = [...this.#filmsModel.films];
     this.#renderNavigation();
+    this.#sortTypeChangeHandler(SortType);
+    console.log(this.#sortTypeChangeHandler(SortType))
     this.#renderViews();
-    this.#renderFilms();
-  }
+   }
 
   #filmChangeHandler = (updatedFilm) => {
     this.#films = updateItem(this.#films, updatedFilm);
@@ -69,6 +72,7 @@ export default class FilmsPresenter {
 
   #renderNavigation() {
     render(this.navigation, this.#container);
+    console.log(this.navigation)
     const allmoviesBtn = this.navigation.element.querySelector('.main-navigation__item[href="#all"]');
     const watchlistBtn = this.navigation.element.querySelector('.main-navigation__item[href="#watchlist"]');
     const watchedBtn = this.navigation.element.querySelector('.main-navigation__item[href="#history"]');
@@ -78,6 +82,43 @@ export default class FilmsPresenter {
     favouriteBtn.addEventListener('click', this.#favouriteBtnClickHandler);
     allmoviesBtn.addEventListener('click', this.#allmoviesBtnClickHandler);
   }
+
+  #allmoviesBtnClickHandler = () => this.#renderFilms();
+
+  #watchlistBtnClickHandler = () => this.#handleFilterClick('watchList');
+
+  #watchedBtnClickHandler = () => this.#handleFilterClick('alreadyWatched');
+
+  #favouriteBtnClickHandler = () => this.#handleFilterClick('favourite');
+
+  #handleFilterClick = (filterProperty) => {
+    remove(this.filmListContainer);
+    this.filmListContainer = new FilmListContainerView();
+    render(this.filmListContainer, this.filmList.element);
+
+    const films = this.#filmsModel.films;
+    const filteredFilms = films.filter((film) => film.userDetails[filterProperty] === true);
+
+    this.#renderFilteredFilms(filteredFilms);
+  };
+
+  #renderFilteredFilms = (filteredFilms) => {
+    if (filteredFilms.length === 0) {
+      render(this.listEmpty, this.filmList.element);
+      return;
+    }
+
+    filteredFilms
+      .slice(0, Math.min(filteredFilms.length, FILM_COUNT_PER_STEP))
+      .forEach((film) => {
+        this.#renderFilm(film, this.filmListContainer);
+      });
+
+    if (filteredFilms.length > FILM_COUNT_PER_STEP) {
+      render(this.filmButtonMore, this.filmList.element);
+      this.filmButtonMore.setClickHandler(this.#filmButtonMoreClickHandler);
+    }
+  };
 
   #filmButtonMoreClickHandler = () => {
     const films = this.#filmsModel.films;
@@ -90,18 +131,59 @@ export default class FilmsPresenter {
 
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
-    if (this.#renderedFilmCount >= films.length) {
+    if (this.#renderedFilmCount >= films.length || filteredFilms.length ) {
       remove(this.filmButtonMore);
     }
 
   };
 
+  #sortFilms = (sortType) => {
+    switch (sortType) {
+      case SortType.DATE:
+        this.#films.sort(sortFilmsByDate);
+        break;
+      case SortType.RATING:
+        this.#films.sort(sortFilmsByRating);
+        break;
+      default:
+        this.#films = [...this.#sourcedFilms]
+    }
+    this.#currentSortType = sortType;
+  };
+
+  #sortTypeChangeHandler = (SortType) => {
+    if (this.#currentSortType === SortType) {
+      return
+    }
+    this.#sortFilms(SortType);
+    // this.#clearFilmList();
+    this.#renderSort(this.#container);
+    this.#renderFilms();
+    console.log(`2`)
+  }
+
+  #renderSort(container) {
+    if (!this.#sortComponent) {
+      this.#sortComponent = new SortView(this.#currentSortType);
+      render(this.#sortComponent, container)
+
+    } else {
+      const updatedSortComponent = new SortView(this.#currentSortType);
+      replace(updatedSortComponent, this.#sortComponent);
+      this.#sortComponent = updatedSortComponent;
+    }
+    this.#sortComponent.setSortTypeChangeHandler(this.#sortTypeChangeHandler);
+      };
+
+  // #clearFilmList = () => {
+  //   this.#filmPresenter.forEach((presenter) => presenter.destroy());
+  //   this.#filmPresenter.clear()
+
+  // };
+
   #renderViews() {
-    render(this.sort, this.#container);
     render(this.films, this.#container);
     render(this.filmDetails, this.#container);
-    // render(this.filmDetailsForm, this.filmDetails.element);
-
   }
 
   #renderFilms() {

@@ -5,12 +5,19 @@ const NOVICE_STATUS = 10;
 const FAN_STATUS = 20;
 const MOVIEBUFF_STATUS = 21;
 
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+}
+
 export {
   FILM_COUNT,
   MAX_COMMENTS_ON_FILM,
   FILM_COUNT_PER_STEP,
   NOVICE_STATUS,
   FAN_STATUS,
-  MOVIEBUFF_STATUS
+  MOVIEBUFF_STATUS,
+  SortType
 
 };
