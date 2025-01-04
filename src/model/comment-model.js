@@ -1,8 +1,14 @@
 import { generateComments } from '../mock/comment.js';
 
 export default class CommentsModel {
-  #comments = generateComments();
-  get comments () {
+  #comments;
+  constructor(films) {
+
+    this.#comments = generateComments(films);
+
+  }
+
+  get comments() {
     return this.#comments;
   }
 

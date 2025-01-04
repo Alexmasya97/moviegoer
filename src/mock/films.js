@@ -1,4 +1,4 @@
-import { getRandomFloat, getRandomArrayElement } from '../utils';
+import { getRandomFloat, getRandomArrayElement, getRandomInteger } from '../utils/utils';
 import { FILM_COUNT } from '../const';
 import { generateComments } from './comment';
 
@@ -82,10 +82,16 @@ const generateFilms = () => {
   const films = Array.from({length: FILM_COUNT}, () => {
     const film = generateFilm();
     filmId++;
+    const alreadyWatched = Boolean(getRandomInteger(0,1));
     return {
       id: String(filmId),
       comments: generateComments([film]), // Генерация комментариев для конкретного фильма
       filmInfo: film,
+      userDetails: {
+        watchList: Boolean(getRandomInteger(0,1)),
+        alreadyWatched,
+        favourite: Boolean(getRandomInteger(0,1))
+      }
     };
   });
   return films;
